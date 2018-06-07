@@ -5,6 +5,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class protection extends JFrame {
@@ -12,6 +16,7 @@ public class protection extends JFrame {
     private static protection frame;
     private static login loginFrame;
     private static register registerFrame;
+    private static menu menuFrame;
     private User user;
     private int option=0;
     final int LOGIN =1;
@@ -22,7 +27,8 @@ public class protection extends JFrame {
         //create a login / register
         frame = new protection();
         frame.setLayout(null);
-        frame.setSize(300,100);
+        frame.setTitle("Welcome");
+        frame.setSize(330,100);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -44,6 +50,8 @@ public class protection extends JFrame {
         jRegister.addActionListener(new actionRegister());
     }
 
+
+    //USER OBJECT
     static class User{
         private  String id;
         private String password;
@@ -127,6 +135,28 @@ public class protection extends JFrame {
             }//end while
             return false;
         }
+
+        //CAN THE USER PLAY GAMES
+        private boolean canPlay(){
+            Date date = new Date();
+            SimpleDateFormat format = new SimpleDateFormat("HH");
+            String time = format.format(date);
+            int currentTime = Integer.parseInt(time);
+
+            //JOptionPane.showMessageDialog(null,currentTime);
+            switch (typeUser){
+                case STUDENT: if (currentTime>=22 || currentTime<=6){
+                    return true;
+                }
+                    break;
+                case FACULTY_MEMBER:if (currentTime>=17 || currentTime<=8){
+                    return true;
+                }
+                    break;
+                case STAFF: return true;
+            }
+            return  false;
+        }
     }
 
     //CLICK TO GO TO LOGIN FRAME
@@ -139,10 +169,10 @@ public class protection extends JFrame {
             loginFrame = new login();
             loginFrame.setLocationRelativeTo(null);
             loginFrame.setSize(200,150);
+            loginFrame.setTitle("Login");
             loginFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             loginFrame.setResizable(false);
             loginFrame.setVisible(true);
-
         }
     }
 
@@ -155,6 +185,7 @@ public class protection extends JFrame {
             // call the register method
             registerFrame = new register();
             registerFrame.setLocationRelativeTo(null);
+            registerFrame.setTitle("Register");
             registerFrame.setSize(200,220);
             registerFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             registerFrame.setResizable(false);
@@ -191,7 +222,7 @@ public class protection extends JFrame {
                 //create a login
                 String password= pw.getText();
                 try {
-                    JOptionPane.showMessageDialog(null,password);
+                    //JOptionPane.showMessageDialog(null,password);
                     user = new User(username.getText().toString(),password.toString());
                 } catch (IOException e1) {
                     e1.printStackTrace();
@@ -243,7 +274,6 @@ public class protection extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox)e.getSource();
-                String petName = (String)cb.getSelectedItem();
             }
         }
 
@@ -267,17 +297,17 @@ public class protection extends JFrame {
         }
     }
 
-    //CALL TH MENU METHOD
+    //CALL THE MENU METHOD
     public void menuMethod(){
-
         if (option==LOGIN){
             loginFrame.dispose();
         }else if (option==REGISTER) {
             registerFrame.dispose();
         }
-        menu menuFrame = new menu();
+        menuFrame = new menu();
         menuFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         menuFrame.setSize(200,250);
+        menuFrame.setTitle("Menu");
         menuFrame.setLocationRelativeTo(null);
         menuFrame.setVisible(true);
     }
@@ -294,20 +324,49 @@ public class protection extends JFrame {
             panel.add(jbtbrowser);
             panel.add(jbtLogout);
             add(panel);
+            jbtPlay.addActionListener(new play());
+            jbtbrowser.addActionListener(new browser());
+            jbtLogout.addActionListener(new logout());
         }
 
         //button actions
         class play implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                if (user.canPlay()){
+                    JOptionPane.showMessageDialog(null,"[ACCESS]\n\nThe user can play games");
+                }else{
+                    JOptionPane.showMessageDialog(null,"[DENIED]\n\nThe user can not play games");
+                }
             }
         }
 
         class logout implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
+            int dialogButton = JOptionPane.YES_NO_CANCEL_OPTION;
+            int dialogRes = JOptionPane.showConfirmDialog(null,"Are you sure" +
+                    " you want to logout?","Warning",dialogButton);
 
+            if (dialogRes==JOptionPane.YES_OPTION){
+                menuFrame.dispose();
+                System.exit(1);
+            }
+        }
+    }
+
+        class browser implements ActionListener{
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Desktop desktop = Desktop.getDesktop();
+
+                try {
+                    desktop.browse(new URI("http://baidu.com"));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                } catch (URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }
