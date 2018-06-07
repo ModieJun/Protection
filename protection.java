@@ -129,7 +129,7 @@ public class protection extends JFrame {
         }
     }
 
-
+    //CLICK TO GO TO LOGIN FRAME
     class actionLogin implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -146,6 +146,7 @@ public class protection extends JFrame {
         }
     }
 
+    //CLICK TO GO TO REGISTER FRAME
     class actionRegister implements  ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -161,7 +162,7 @@ public class protection extends JFrame {
         }
     }
 
-
+    //LOGIN FRAME
     class login extends  JFrame{
         JPasswordField pw;
         JTextField username;
@@ -188,17 +189,18 @@ public class protection extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //create a login
+                String password= pw.getText();
                 try {
-                    user = new User(username.getText().toString(),pw.getPassword().toString());
+                    JOptionPane.showMessageDialog(null,password);
+                    user = new User(username.getText().toString(),password.toString());
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-
-                menu();
+                menuMethod();
             }
         }
     }
-
+    //REGISTER FRAME
     class register extends  JFrame{
         JTextField jtUsername;
         JTextField jtPw;
@@ -252,7 +254,7 @@ public class protection extends JFrame {
                     JOptionPane.showMessageDialog(null,"[ERROR] password does not match");
                     System.exit(1);
                 }
-
+                //JOptionPane.showMessageDialog(null,select.getSelectedItem().toString());
                 try {
                     user = new User(jtUsername.getText(),jtPw.getText(),determineType(select.getSelectedItem().toString()));
                     JOptionPane.showMessageDialog(null,"[SUCCESS]\n\n" +
@@ -260,22 +262,27 @@ public class protection extends JFrame {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-                menu();
+                menuMethod();
             }
         }
     }
 
-    public void menu(){
+    //CALL TH MENU METHOD
+    public void menuMethod(){
+
         if (option==LOGIN){
             loginFrame.dispose();
         }else if (option==REGISTER) {
             registerFrame.dispose();
         }
-
-        menu();
-
+        menu menuFrame = new menu();
+        menuFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        menuFrame.setSize(200,250);
+        menuFrame.setLocationRelativeTo(null);
+        menuFrame.setVisible(true);
     }
 
+    //MENU FRAME
     class menu extends  JFrame{
         //
         menu(){
@@ -311,7 +318,7 @@ public class protection extends JFrame {
         }else  if (s.equals("FACULTY_MEMBERS")){
             return type.FACULTY_MEMBER;
         }else {
-            return type.STUDENT;
+            return type.STAFF;
         }
     }
 }
