@@ -62,10 +62,15 @@ public class protection extends JFrame {
         public User(String username, String pw) throws IOException{
             if(file.exists() ==false){
                 JOptionPane.showMessageDialog(null,"[ERROR]\n\n users.txt " +
-                        "does not exist, please register");
+                        "does not exist, please register a user");
                 System.exit(0);
             }
 
+            if (!userExist(username)){
+                JOptionPane.showMessageDialog(null,"[[User Does not exist]]\n\nPlease register" +
+                        " or Login with the right credentials");
+                System.exit(1);
+            }
             Scanner read = new Scanner(file);
             String temp;
 
@@ -82,9 +87,10 @@ public class protection extends JFrame {
                     setCategory(temp);
                     this.id = username;
                     this.password = pw;
-                    break;
+                    return;
                 }
             }
+
         }
 
         //REGISTER
@@ -292,6 +298,7 @@ public class protection extends JFrame {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+                JOptionPane.showMessageDialog(null,"[[SUCCES]]Login Successful");
                 menuMethod();
             }
         }
@@ -306,7 +313,7 @@ public class protection extends JFrame {
         }
         menuFrame = new menu();
         menuFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        menuFrame.setSize(200,250);
+        menuFrame.setSize(300,200);
         menuFrame.setTitle("Menu");
         menuFrame.setLocationRelativeTo(null);
         menuFrame.setVisible(true);
